@@ -1,41 +1,61 @@
 import alumno.*
 import materia.*
+import carrera.*
 
 
 describe"Mi universidad"{
 	
-	
-	const mate1 = new Materia()
-	
-	const objetos1 = new MateriaConCorrelativas(
-		carrera = "TPI",
-		creditos = 30,
-		materiasCorrelativas = [mate1]	,
-		anio = 1	
+	const orga = new SinRequisitos()
+	const mate = new SinRequisitos()
+	const inpr = new ConCorrelativas( materiasCorrelativas = [mate])
+	const objetos1 = new ConCorrelativas(
+		materiasCorrelativas = [orga]
 	)
 	
-	const inpr = new MateriasSinRequisitos(
-		creditos = 10,
-		carrera ="TPI",
-		anio = 1
-
-	)
+	const objetos3 = new PorAnio()
+	
+	const tpi = new Carrera(materias = [mate,orga,inpr,objetos1])
+	const lic = new Carrera()
+	
+	const reg1 = new RegistroDeMateria( materia = inpr, nota = 7)
+	const reg2 = new RegistroDeMateria( materia = orga, nota = 7)
 	
 	const nicolas = new Alumno(
-		fojaDeMaterias = [
-			new RegistroDeMateria(materia = objetos1, nota = 8),
-			new RegistroDeMateria(materia = mate1, nota =6)
-		
-		],
-		materiasAnotadas = [objetos1,mate1]
+		foja = #{reg1},
+		carreras= [tpi]
 	)
 	
+	const brian = new Alumno(
+		foja = #{reg1},
+		carreras= [tpi]
+		)
+		
 	
+	test "punto 1 - nicolas puede cursar objetos1"{
+		assert.that(nicolas.puedeCursar(orga))
+	}
 	
+	test "punto 2 - registrar objetos 1"{
+		nicolas.registarMateria(orga,8)
+		assert.that(nicolas.tieneAprobado(orga))
+	}
 	
-	test"test"{
-		//assert.that(nicolas.tieneAprobado(objetos1))
-		assert.equals(objetos1,nicolas.materiasAprobadas())
+	test "punto 3 - Inscribir alumno a la materia"{
+		nicolas.registarMateria(orga,8)
+		assert.that(nicolas.puedeCursar(objetos1))
+		nicolas.incribirAlumnoA(objetos1)
+		assert.that(objetos1.listaDeInscriptos().contains(nicolas))
+	}
+	
+	test "punto 4 - Dar de baja un estudiante"{
+		objetos1.listaDeEspera().add(brian)
+		nicolas.registarMateria(orga,8)
+		assert.that(nicolas.puedeCursar(objetos1))
+		nicolas.incribirAlumnoA(objetos1)
+		assert.that(objetos1.listaDeInscriptos().contains(nicolas))
+		objetos1.darDeBajaA(nicolas)
+		assert.that(objetos1.listaDeInscriptos().contains(brian))	
+		
 	}
 	
 }

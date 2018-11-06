@@ -3,7 +3,9 @@ import materia.*
 
 
 class Carrera{
-	const materias
+	const property materias //[]
+	
+	method tieneEsta(materia) = materias.contains(materia)
 	
 	//devuelve una lista del anio x de todas las materias de las materias
 	method materiasDelAnio(x){
